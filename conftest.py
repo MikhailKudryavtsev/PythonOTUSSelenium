@@ -29,7 +29,7 @@ def driver(request):
         options = ChromeOptions()
         options.add_argument("start-maximized")
         options.add_argument("-ignore-certificate-errors")
-        # options.headless = True
+        options.headless = True
         wd = webdriver.Chrome(options=options)
         request.addfinalizer(wd.quit)
         return wd
@@ -41,4 +41,5 @@ def driver(request):
         return wd
     elif driver == 'ie':
         wd = webdriver.Ie()
+        request.addfinalizer(wd.quit)
         return wd
