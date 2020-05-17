@@ -30,15 +30,18 @@ def driver(request):
         options.add_argument("start-maximized")
         options.headless = True
         wd = webdriver.Chrome(options=options)
+        wd.implicitly_wait(5)
         request.addfinalizer(wd.quit)
         return wd
     elif driver == 'firefox':
         options = FirefoxOptions()
         options.headless = True
         wd = webdriver.Firefox(options=options)
+        wd.implicitly_wait(5)
         request.addfinalizer(wd.quit)
         return wd
     elif driver == 'ie':
         wd = webdriver.Ie()
+        wd.implicitly_wait(5)
         request.addfinalizer(wd.quit)
         return wd
