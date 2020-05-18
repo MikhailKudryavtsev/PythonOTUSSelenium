@@ -41,4 +41,5 @@ def driver(request):
         return wd
     elif driver == 'ie':
         wd = webdriver.Ie()
+        request.addfinalizer(wd.quit)
         return wd
