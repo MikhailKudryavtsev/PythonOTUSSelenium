@@ -1,33 +1,15 @@
 import pytest
-from my_wait import MyVisibilityOfSelector
-from selenium.common.exceptions import NoSuchElementException, TimeoutException
-from selenium.webdriver.common.by import By
+from locators import Locators
+from selenium.common.exceptions import TimeoutException
 
 
-def test_login_page(url, driver):
-    driver.get(f'{url}index.php?route=account/login')
+def test_login_page(account):
     try:
-        selector = '//*[@id="column-right"]/div'
-        MyVisibilityOfSelector(driver, By.XPATH, selector).wdw()
-        driver.find_element_by_xpath(selector)
-
-        selector = 'a.btn.btn-primary'
-        MyVisibilityOfSelector(driver, By.CSS_SELECTOR, selector).wdw()
-        driver.find_element_by_css_selector(selector)
-
-        selector = 'account-login'
-        MyVisibilityOfSelector(driver, By.ID, selector).wdw()
-        driver.find_element_by_id(selector)
-
-        selector = 'navbar-header'
-        MyVisibilityOfSelector(driver, By.CLASS_NAME, selector).wdw()
-        driver.find_element_by_class_name(selector)
-
-        selector = 'Forgotten Password'
-        MyVisibilityOfSelector(driver, By.LINK_TEXT, selector).wdw()
-        driver.find_element_by_link_text(selector)
+        account.find_element(account.driver, Locators.list_group)
+        account.find_element(account.driver, Locators.button_Continue)
+        account.find_element(account.driver, Locators.container_account_login)
+        account.find_element(account.driver, Locators.navbar_header)
+        account.find_element(account.driver, Locators.link_Forgotten_Password)
         print('\nВсе элементы найдены')
-    except NoSuchElementException as e:
-        pytest.fail(f'\nНет элемента - {e}')
     except TimeoutException:
-        pytest.fail(f'\nНе дождался элемента - {selector}')
+        pytest.fail(f'\nНе дождался элемента')

@@ -1,6 +1,13 @@
 import pytest
+
+from pages.account_page import AccountPage
+from pages.admin_page import AdminPage
+from pages.category_page import CategoryPage
+from pages.product_page import ProductPage
 from selenium import webdriver
 from selenium.webdriver import ChromeOptions, FirefoxOptions
+
+from pages.start_page import StartPage
 
 
 def pytest_addoption(parser):
@@ -42,3 +49,34 @@ def driver(request):
     elif driver == 'ie':
         wd = webdriver.Ie()
         return wd
+
+
+@pytest.fixture
+def product(driver):
+    page = ProductPage(driver)
+    return page
+
+@pytest.fixture
+def admin(driver):
+    page = AdminPage(driver)
+    page.get_url()
+    return page
+
+@pytest.fixture
+def category(driver):
+    page = CategoryPage(driver)
+    page.get_url()
+    return page
+
+@pytest.fixture
+def account(driver):
+    page = AccountPage(driver)
+    page.get_url()
+    return page
+
+@pytest.fixture
+def start_page(url, driver):
+    page = StartPage(url, driver)
+    page.get_url()
+    return page
+

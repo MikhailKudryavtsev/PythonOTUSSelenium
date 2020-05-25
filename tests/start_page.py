@@ -1,33 +1,15 @@
 import pytest
-from my_wait import MyVisibilityOfSelector
-from selenium.common.exceptions import NoSuchElementException, TimeoutException
-from selenium.webdriver.common.by import By
+from selenium.common.exceptions import TimeoutException
+from locators import Locators
 
 
-def test_start_page(url, driver):
-    driver.get(url)
+def test_start_page(start_page):
     try:
-        selector = '//*[@id="logo"]/h1/a'
-        MyVisibilityOfSelector(driver, By.XPATH, selector).wdw()
-        driver.find_element_by_xpath(selector)
-
-        selector = '.btn-group.btn-block'
-        MyVisibilityOfSelector(driver, By.CSS_SELECTOR, selector).wdw()
-        driver.find_element_by_css_selector(selector)
-
-        selector = 'form-currency'
-        MyVisibilityOfSelector(driver, By.ID, selector).wdw()
-        driver.find_element_by_id(selector)
-
-        selector = 'list-inline'
-        MyVisibilityOfSelector(driver, By.CLASS_NAME, selector).wdw()
-        driver.find_element_by_class_name(selector)
-
-        selector = 'MacBook'
-        MyVisibilityOfSelector(driver, By.LINK_TEXT, selector).wdw()
-        driver.find_element_by_link_text(selector)
+        start_page.find_element(start_page.driver, Locators.your_store)
+        start_page.find_element(start_page.driver, Locators.button_cart)
+        start_page.find_element(start_page.driver, Locators.form_currency)
+        start_page.find_element(start_page.driver, Locators.list_buttons)
+        start_page.find_element(start_page.driver, Locators.link_MacBook)
         print('\nВсе элементы найдены')
-    except NoSuchElementException as e:
-        pytest.fail(f'\nНет элемента - {e}')
     except TimeoutException:
-        pytest.fail(f'\nНе дождался элемента - {selector}')
+        pytest.fail(f'\nНе дождался элемента')
