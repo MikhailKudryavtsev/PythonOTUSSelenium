@@ -87,6 +87,7 @@ def driver(request, proxy_server):
         return wd
     elif driver == 'ie':
         wd = webdriver.Ie()
+        request.addfinalizer(wd.quit)
         return wd
 
 
