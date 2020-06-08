@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s : %(message)s', level=logging.INFO,
                     filename="Opencart.log")
 
+
 class Mylogger(AbstractEventListener):
 
     def before_quit(self, driver):
@@ -43,6 +44,17 @@ def pytest_addoption(parser):
         "--url",
         default="http://localhost/",
         help="This is URL opencart"
+    )
+    parser.addoption(
+        "--browser",
+        action="store",
+        default="firefox",
+        choices=["chrome", "firefox", "opera", "yandex"]
+    )
+    parser.addoption(
+        "--executor",
+        action="store",
+        default="localhost"
     )
 
 
@@ -122,3 +134,32 @@ def start_page(url, driver):
     page = StartPage(url, driver)
     page.get_url()
     return page
+
+
+@pytest.fixture
+def remote(request):
+    browser = request.config.getoption("--browser")
+    executor = request.config.getoption("--executor")
+    wd = webdriver.Remote(command_executor=f"http://{executor}:4444/wd/hub",
+                          desired_capabilities={"browserName": browser})
+    wd.implicitly_wait(15)
+    request.addfinalizer(wd.quit)
+    return wd
+
+
+@pytest.fixture
+def remote2(request):
+    desired_cap = {
+     'browser': 'IE',
+     'browser_version': '8.0',
+     'os': 'Windows',
+     'os_version': '7',
+     'resolution': '1024x768',
+     'name': 'Bstack-[Python] Sample Test'
+    }
+    wd = webdriver.Remote(
+        command_executor='http://bsuser70664:HQksrCDXwqH6w7vwFhUA@hub.browserstack.com:80/wd/hub',
+        desired_capabilities=desired_cap)
+    wd.implicitly_wait(15)
+    request.addfinalizer(wd.quit)
+    return wd
