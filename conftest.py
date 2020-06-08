@@ -30,39 +30,21 @@ class Mylogger(AbstractEventListener):
         logger.error(f'Something went wrong: {exception}')
         original = f"{exception}.png"
         screenshot = original.replace("/", "")
-        product.driver.save_screenshot(screenshot)
+        driver.save_screenshot(screenshot)
 
 
 def pytest_addoption(parser):
-    parser.addoption(
-        "--driver",
-        default="chrome",
-        help="This is webdriver for start browser"
-    )
-
-    parser.addoption(
-        "--url",
-        default="http://localhost/",
-        help="This is URL opencart"
-    )
-    parser.addoption(
-        "--browser",
-        action="store",
-        default="firefox",
-        choices=["chrome", "firefox", "opera", "yandex"]
-    )
-    parser.addoption(
-        "--executor",
-        action="store",
-        default="localhost"
-    )
+    parser.addoption("--driver", default="chrome", help="This is webdriver for start browser")
+    parser.addoption("--url", default="http://192.168.0.102:82/", help="This is URL opencart")
+    parser.addoption("--browser", action="store", default="opera", choices=["chrome", "firefox", "opera", "yandex"])
+    parser.addoption("--executor", action="store", default="localhost")
 
 
 @pytest.fixture
 def proxy_server(request):
-    server = Server("browsermob-proxy/bin/browsermob-proxy")
+    server = Server("browsermob-proxy/bin/browsermob-proxy", options={"port": 8081})
     server.start()
-    client = Client("localhost:8080")
+    client = Client("localhost:82")
     server.create_proxy()
     request.addfinalizer(server.stop)
     client.new_har()
@@ -104,34 +86,34 @@ def driver(request, proxy_server):
 
 
 @pytest.fixture
-def product(driver):
-    page = ProductPage(driver)
+def product(browser):
+    page = ProductPage(browser)
     return page
 
 @pytest.fixture
-def admin(driver):
-    page = AdminPage(driver)
+def admin(browser):
+    page = AdminPage(browser)
     page.get_url()
     return page
 
 
 @pytest.fixture
-def category(driver):
-    page = CategoryPage(driver)
+def category(browser):
+    page = CategoryPage(browser)
     page.get_url()
     return page
 
 
 @pytest.fixture
-def account(driver):
-    page = AccountPage(driver)
+def account(browser, url):
+    page = AccountPage(browser, url)
     page.get_url()
     return page
 
 
 @pytest.fixture
-def start_page(url, driver):
-    page = StartPage(url, driver)
+def start_page(url, browser):
+    page = StartPage(url, browser)
     page.get_url()
     return page
 
@@ -163,3 +145,19 @@ def remote2(request):
     wd.implicitly_wait(15)
     request.addfinalizer(wd.quit)
     return wd
+
+
+@pytest.fixture
+def browser(request):
+    browser = request.config.getoption("--browser")
+    selenoid = request.config.getoption("--executor")
+    executor_url = f"http://{selenoid}:4444/wd/hub"
+    caps = {"browserName": browser,
+            "enableVnc": True,
+            "enableVideo": True,
+            "enableLog": True,
+            "name": request.node.name}
+    driver = webdriver.Remote(command_executor=executor_url, desired_capabilities=caps)
+    driver = EventFiringWebDriver(driver, Mylogger())
+    request.addfinalizer(driver.quit)
+    return driver
