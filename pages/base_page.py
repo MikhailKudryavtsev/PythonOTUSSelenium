@@ -2,6 +2,7 @@ import logging
 import random
 import string
 
+import allure
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -15,7 +16,7 @@ class BasePage(object):
 
     def __init__(self, driver):
         self.driver = driver
-        self.url = 'http://localhost/'
+        self.url = 'http://localhost:82/'
         self.logger = logging.getLogger(type(self).__name__)
 
     def find_element(self, driver, locator):
@@ -37,6 +38,9 @@ class BasePage(object):
         browser = self.driver.get_log("browser")
         for item in browser:
             self.logger.info(f'Error from browser console: {item}')
+            allure.attach(body=f'Error from browser console: {item}',
+                          name="logs browser",
+                          attachment_type=allure.attachment_type.TEXT)
 
     def proxy_logs(self):
         har = self.driver.proxy.har['log']['entries']
