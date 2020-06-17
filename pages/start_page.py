@@ -1,3 +1,4 @@
+import allure
 from selenium.webdriver.common.by import By
 from pages.base_page import BasePage
 
@@ -21,9 +22,11 @@ class StartPage(BasePage):
     def open_cart(self):
         self.browser_logs()
         self.proxy_logs()
-        self.find_element(self.driver, self.button_cart).click()
+        with allure.step("Открытие корзины"):
+            self.find_element(self.driver, self.button_cart).click()
         self.logger.info(f'Clicked element: {self.button_cart}')
-        self.cart_menu = self.find_element(self.driver, self.cart_dropdown_menu)
+        with allure.step("Поиск элементов"):
+            self.cart_menu = self.find_element(self.driver, self.cart_dropdown_menu)
         return self.cart_menu
 
     def get_url(self):
@@ -33,9 +36,11 @@ class StartPage(BasePage):
         self.browser_logs()
         self.proxy_logs()
         self.create_name()
-        self.find_element(self.driver, self.input_search).send_keys(self.random_name)
+        with allure.step("Ввод названия продукта в строку поиска"):
+            self.find_element(self.driver, self.input_search).send_keys(self.random_name)
         self.logger.info(f'Entered text "{self.random_name}" in {self.input_search}')
         self.find_element(self.driver, self.button_search).click()
         self.logger.info(f'Clicked element: {self.button_search}')
-        self.result = self.find_element(self.driver, self.search_results)
+        with allure.step("Поиск введенного продукта"):
+            self.result = self.find_element(self.driver, self.search_results)
         return self.result

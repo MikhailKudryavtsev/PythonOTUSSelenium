@@ -35,16 +35,16 @@ class Mylogger(AbstractEventListener):
 
 def pytest_addoption(parser):
     parser.addoption("--driver", default="chrome", help="This is webdriver for start browser")
-    parser.addoption("--url", default="http://192.168.0.102:82/", help="This is URL opencart")
-    parser.addoption("--browser", action="store", default="opera", choices=["chrome", "firefox", "opera", "yandex"])
+    parser.addoption("--url", default="http://localhost:82", help="This is URL opencart")
+    parser.addoption("--browser", action="store", default="chrome", choices=["chrome", "firefox", "opera", "yandex"])
     parser.addoption("--executor", action="store", default="localhost")
 
 
 @pytest.fixture
 def proxy_server(request):
-    server = Server("browsermob-proxy/bin/browsermob-proxy", options={"port": 8081})
+    server = Server("browsermob-proxy/bin/browsermob-proxy")
     server.start()
-    client = Client("localhost:82")
+    client = Client("localhost:8080")
     server.create_proxy()
     request.addfinalizer(server.stop)
     client.new_har()
@@ -86,34 +86,34 @@ def driver(request, proxy_server):
 
 
 @pytest.fixture
-def product(browser):
-    page = ProductPage(browser)
+def product(driver):
+    page = ProductPage(driver)
     return page
 
 @pytest.fixture
-def admin(browser):
-    page = AdminPage(browser)
+def admin(driver):
+    page = AdminPage(driver)
     page.get_url()
     return page
 
 
 @pytest.fixture
-def category(browser):
-    page = CategoryPage(browser)
+def category(driver):
+    page = CategoryPage(driver)
     page.get_url()
     return page
 
 
 @pytest.fixture
-def account(browser, url):
-    page = AccountPage(browser, url)
+def account(driver, url):
+    page = AccountPage(driver, url)
     page.get_url()
     return page
 
 
 @pytest.fixture
-def start_page(url, browser):
-    page = StartPage(url, browser)
+def start_page(url, driver):
+    page = StartPage(url, driver)
     page.get_url()
     return page
 

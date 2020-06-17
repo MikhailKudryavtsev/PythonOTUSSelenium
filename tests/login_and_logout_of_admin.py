@@ -1,7 +1,9 @@
+import allure
 import pytest
 from selenium.common.exceptions import TimeoutException
 
 
+@allure.title("Тест элемены на странице product")
 def test_login_and_logout_of_admin(admin):
     try:
         admin.authorization_admin()

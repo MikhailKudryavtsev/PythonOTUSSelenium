@@ -1,5 +1,7 @@
+import allure
 from selenium.webdriver.common.by import By
 from pages.base_page import BasePage
+
 
 class AdminPage(BasePage):
 
@@ -21,22 +23,26 @@ class AdminPage(BasePage):
         self.password = 'bitnami1'
 
     def authorization_admin(self):
-        self.browser_logs()
-        self.proxy_logs()
-        self.find_element(self.driver, self.input_username).send_keys(self.username)
-        self.logger.info(f'Entered "{self.username}" in {self.input_username}')
-        self.find_element(self.driver, self.input_password).send_keys(self.password)
-        self.logger.info(f'Entered "{self.password}" in {self.input_password}')
-        self.find_element(self.driver, self.button_login).click()
-        self.logger.info(f'Clicked element: {self.button_login}')
-        self.find_element(self.driver, self.img_user_profile)
+        with allure.step("Авторизаия"):
+            self.browser_logs()
+            self.proxy_logs()
+            self.find_element(self.driver, self.input_username).send_keys(self.username)
+            self.logger.info(f'Entered "{self.username}" in {self.input_username}')
+            self.find_element(self.driver, self.input_password).send_keys(self.password)
+            self.logger.info(f'Entered "{self.password}" in {self.input_password}')
+            self.find_element(self.driver, self.button_login).click()
+            self.logger.info(f'Clicked element: {self.button_login}')
+        with allure.step("Поиск элементов"):
+            self.find_element(self.driver, self.img_user_profile)
 
     def logout_admin(self):
-        self.browser_logs()
-        self.proxy_logs()
-        self.find_element(self.driver, self.buttom_logout).click()
-        self.logger.info(f'Clicked element: {self.buttom_logout}')
-        self.find_element(self.driver, self.panel_heading)
+        with allure.step("Выход из аккаунта"):
+            self.browser_logs()
+            self.proxy_logs()
+            self.find_element(self.driver, self.buttom_logout).click()
+            self.logger.info(f'Clicked element: {self.buttom_logout}')
+        with allure.step("Поиск элементов"):
+            self.find_element(self.driver, self.panel_heading)
 
     def get_url(self):
         self.logger.info(f'Opening url: {self.url_admin}')
