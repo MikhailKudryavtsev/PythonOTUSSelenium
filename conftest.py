@@ -1,4 +1,5 @@
 import pytest
+import psycopg2
 import logging
 import urllib.parse
 from browsermobproxy import Server, Client
@@ -6,6 +7,8 @@ from selenium import webdriver
 from selenium.webdriver import ChromeOptions, FirefoxOptions
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.support.events import EventFiringWebDriver, AbstractEventListener
+
+from db_manager import DBmanager
 from pages.account_page import AccountPage
 from pages.admin_page import AdminPage
 from pages.category_page import CategoryPage
@@ -116,6 +119,11 @@ def start_page(url, driver):
     page = StartPage(url, driver)
     page.get_url()
     return page
+
+@pytest.fixture
+def db_manager(request):
+    db = DBmanager()
+    return db
 
 
 @pytest.fixture
